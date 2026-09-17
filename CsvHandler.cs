@@ -397,6 +397,7 @@ namespace CsvHandler
 
         public static Delimiter Comma { get { return new Delimiter(","); } }
         public static Delimiter Tab { get { return new Delimiter("\t"); } }
+        public static Delimiter Semicolon { get { return new Delimiter(";"); } }
         public static Delimiter Pipe { get { return new Delimiter("|"); } }
     }
 
