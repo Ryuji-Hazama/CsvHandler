@@ -63,8 +63,15 @@ namespace CsvHandler
 
     public class CsvHandler : ICsvHandler
     {
+        #region Constants
+
         const string DEFAULT_ENCODING = "UTF-8";
         const string DEFAULT_DELIMITER = ",";
+        const string KEY_ROW_INDEX = "row_index";
+
+        #endregion
+
+        #region Constructor
 
         public CsvHandler(
             string file_name,
@@ -78,14 +85,22 @@ namespace CsvHandler
             File_Encoding = encoding ?? Encoding.GetEncoding(DEFAULT_ENCODING);
             Csv_Delimiter = delimiter?.Value ?? DEFAULT_DELIMITER;
             Has_Header = has_header;
-            Header = header ?? [];
+            Header = header ?? new List<string>();
         }
+
+        #endregion
+
+        #region Class members
 
         public string File_Name { get; set; }
         public Encoding File_Encoding { get; set; }
         public string Csv_Delimiter { get; set; }
         public bool Has_Header { get; set; }
         public List<string> Header { get; set; }
+
+        #endregion
+
+        #region Public Methods
 
         /// <summary>
         /// Reads the CSV file and returns a list of rows, where each row is represented as a list of strings.
@@ -110,18 +125,11 @@ namespace CsvHandler
                     {
                         SetHeader(line);
 
-                        if (skip_header)
+                        if (skip_header && Has_Header)
                         {
-                            if (Has_Header)
-                            {
-                                // Skip the header row if specified
-                                row_index++;
-                                continue;
-                            }
-                            else
-                            {
-                                throw new HandlerExceptions.InvalidArgumentException("Cannot skip header when Has_Header is set to false.");
-                            }
+                            // Skip the header row if specified
+                            row_index++;
+                            continue;
                         }
                     }
 
@@ -149,7 +157,7 @@ namespace CsvHandler
         public List<Dictionary<string, string>> ReadAsDictionaryList()
         {
             List<Dictionary<string, string>> result = new List<Dictionary<string, string>>();
-            List<List<string>> data_rows = Read();
+            List<List<string>> data_rows = Read(true);
             int header_count = Header.Count;
 
             if (header_count == 0)
@@ -157,17 +165,24 @@ namespace CsvHandler
                 throw new HandlerExceptions.InvalidArgumentException("Header is empty. Cannot read CSV as dictionary.");
             }
 
-            foreach (List<string> row in data_rows)
+            bool row_index_useable = !Header.Contains(KEY_ROW_INDEX);   // Check if the row index key is not already present in the header
+
+            for (int i = 0; i < data_rows.Count; i++)
             {
+                List<string> row = data_rows[i];
                 if (row.Count != header_count)
                 {
                     throw new HandlerExceptions.InvalidCSVException($"Row has a different number of columns ({row.Count}) than the header ({header_count}).");
                 }
 
                 Dictionary<string, string> row_dict = new Dictionary<string, string>();
-                for (int i = 0; i < header_count; i++)
+
+                if (row_index_useable)
+                    row_dict[KEY_ROW_INDEX] = (i + 1).ToString(); // Add the row index to the dictionary if usable
+
+                for (int j = 0; j < header_count; j++)
                 {
-                    row_dict[Header[i]] = row[i];
+                    row_dict[Header[j]] = row[j];
                 }
                 result.Add(row_dict);
             }
@@ -232,9 +247,9 @@ namespace CsvHandler
             }
         }
 
-        /* - - - - - - - - - - - - *
-         *  Private Helper Methods *
-         * - - - - - - - - - - - - */
+        #endregion
+
+        #region Private Helper Methods
 
         private List<string>? SetHeader(string row)
         {
@@ -388,6 +403,8 @@ namespace CsvHandler
             }
             return joined_row.ToString();
         }
+
+        #endregion
     }
 
     public class Delimiter
