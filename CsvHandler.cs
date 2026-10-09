@@ -9,6 +9,11 @@ namespace CsvHandler
     public interface ICsvHandler
     {
         /// <summary>
+        /// Key for the row index in the CSV file.
+        /// </summary>
+        const string KEY_ROW_INDEX = "row_index";
+
+        /// <summary>
         /// Gets or sets the file name for the CSV file.
         /// </summary>
         string File_Name { get; set; }
@@ -67,7 +72,7 @@ namespace CsvHandler
 
         const string DEFAULT_ENCODING = "UTF-8";
         const string DEFAULT_DELIMITER = ",";
-        const string KEY_ROW_INDEX = "row_index";
+        public const string KEY_ROW_INDEX = "row_index";
 
         #endregion
 
