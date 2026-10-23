@@ -63,7 +63,7 @@ namespace CsvHandler
         /// <param name="new_line">The newline character to use.</param>
         /// <param name="file_mode">The write mode, either overwrite or append.</param>
         /// <exception cref="HandlerExceptions">Thrown when an error occurs while writing to the CSV file.</exception>
-        void Write(List<List<string>> data_rows, string? new_line = null, WriteMode? write_mode = null, bool write_header = true);
+        void Write(List<List<string>> data_rows, string? new_line = null, WriteMode write_mode = WriteMode.Overwrite, bool write_header = true);
     }
 
     public class CsvHandler : ICsvHandler
@@ -202,13 +202,13 @@ namespace CsvHandler
         /// <param name="new_line">The newline character to use.</param>
         /// <param name="file_mode">The write mode, either overwrite or append.</param>
         /// <exception cref="HandlerExceptions">Thrown when an error occurs while writing to the CSV file.</exception>
-        public void Write(List<List<string>> data_rows, string? new_line = null, WriteMode? write_mode = null, bool write_header = true)
+        public void Write(List<List<string>> data_rows, string? new_line = null, WriteMode write_mode = WriteMode.Overwrite, bool write_header = true)
         {
             StreamWriter? writer = null;
 
             try
             {
-                if (write_mode is null || write_mode == WriteMode.Overwrite)
+                if (write_mode == WriteMode.Overwrite)
                 {
                     if (File.Exists(File_Name)) // Delete the file if it exists to overwrite it
                         File.Delete(File_Name);
@@ -423,13 +423,10 @@ namespace CsvHandler
         public static Delimiter Pipe { get { return new Delimiter("|"); } }
     }
 
-    public class WriteMode
+    public enum WriteMode
     {
-        private WriteMode(string value) { Value = value; }
-        public string Value { get; private set; }
-
-        public static WriteMode Overwrite { get { return new WriteMode("w"); } }
-        public static WriteMode Append { get { return new WriteMode("a"); } }
+        Overwrite,
+        Append
     }
 
     public class HandlerExceptions : Exception
