@@ -17,38 +17,15 @@ The `CSV Handler` is a `C#` library designed to facilitate reading from and writ
 
 ## :arrow_down: Clone the Repository
 
-We are temporarily using a git bundle to manage the repository. But we will switch to a normal git repository in the future. Please clone the repository using the following command:
+Clone the repository using the following command:
 
 ```bash
-git clone /path/to/csv_handler.bundle csv_handler
+git clone https://github.com/Ryuji-Hazama/CsvHandler.git
 ```
 
 ## :package: Importing the Library to Your Project
 
 To use the `CSV Handler` library in your `C#` project, follow these steps:
-
-### :arrow_down: Import Library to Aras Innovator Server Method
-
-1. **Download the Library**: Ensure you have the `CSV Handler` library files or the compiled DLL available.
-2. **Place the Library**: Copy the library files or DLL to a directory accessible by your Aras Innovator server.
-    - If you are using a DLL, place it in the `bin` directory of your Aras Innovator installation.
-
-    ```text
-    ./Server_root (e.g., C:\Program Files\Aras\Innovator\Server)
-        ├── bin/
-        │   └── csv_handler.dll
-        └── ...
-    ```
-
-    - If you are using source files, ensure they are included in your project and compiled accordingly.
-3. **Reference the Library**: In your Aras Innovator server method, add a reference to the `CSV Handler` library.
-    - If using a DLL, you can reference it in your method code by adding a `using` directive at the top of your `C#` code file:
-
-      ```csharp
-      using CsvHandler; // Replace with the actual namespace of the `CSV Handler` library
-      ```
-
-    - If using source files, ensure that the namespace is correctly referenced in your method code.
 
 ### :arrow_down: Import Library to Your Local `C#` Project
 
@@ -211,9 +188,9 @@ To build a DLL from the `CSV Handler` library source code, follow these steps:
 
 Contributions are welcome! If you have suggestions for improvements or new features, please feel free to submit a pull request or open an issue on the company Git repository.
 
-## :email: Contact
+## :email: Issues
 
-For any questions or support regarding the `CSV Handler` library, please contact the maintainer named in the company Git repository.
+If you encounter any issues or have suggestions for improvements, please open an issue on my git repository: [https://github.com/Ryuji-Hazama/CsvHandler/issues](https://github.com/Ryuji-Hazama/CsvHandler/issues).
 
 *Thank you for using the `CSV Handler` library!* :wave:  
 *Happy coding!* :computer:

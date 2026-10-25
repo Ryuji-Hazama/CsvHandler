@@ -17,30 +17,15 @@
 
 ## :arrow_down: リポジトリのクローン
 
-一時的に `git bundle` を使用してリポジトリを管理していますが、将来的には通常の `git` リポジトリに切り替える予定です。以下のコマンドを使用してリポジトリをクローンしてください。
+以下のコマンドを使用してリポジトリをクローンしてください。
 
 ```bash
-git clone /path/to/csv_handler.bundle csv_handler
+git clone https://github.com/Ryuji-Hazama/CsvHandler.git
 ```
 
 ## :package: プロジェクトにライブラリをインポートする
 
 `C#`プロジェクトで`CSV Handler`ライブラリを使用するには、以下の手順に従ってください。
-
-### :arrow_down: Aras Innovator サーバーメソッドにライブラリをインポート
-
-1. **ライブラリをダウンロード**: `CSV Handler`ライブラリファイルまたはコンパイル済みDLLが利用可能であることを確認します。
-2. **ライブラリを配置**: ライブラリファイルまたはDLLをAras Innovatorサーバーがアクセスできるディレクトリにコピーします。
-    - DLLを使用している場合は、Aras Innovatorインストールの `bin` ディレクトリに配置します。
-    - ソースファイルを使用している場合は、プロジェクトに含めて適宜コンパイルされていることを確認してください。
-3. **ライブラリを参照**: Aras Innovatorサーバーメソッドで、`CSV Handler`ライブラリへの参照を追加します。
-    - DLLを使用する場合は、`C#`コードファイルの先頭に `using` ディレクティブを追加することで、メソッドコード内で参照できます。
-
-      ```csharp
-      using CsvHandler; // `CSV Handler`ライブラリの実際の名前空間に置き換えてください
-      ```
-
-    - ソースファイルを使用している場合は、メソッドコード内で名前空間が正しく参照されていることを確認してください。
 
 ### :arrow_down: ローカル`C#`プロジェクトにライブラリをインポート
 
@@ -205,7 +190,7 @@ class Program
 
 ## :email: お問い合わせ
 
-`CSV Handler`ライブラリについてご質問がある場合や、サポートが必要な場合は、会社のGitリポジトリに記載されているメンテナーにお問い合わせください。
+問題が発生した場合や改善の提案がある場合は、私のGitリポジトリでIssueを開いてください: [https://github.com/Ryuji-Hazama/CsvHandler/issues](https://github.com/Ryuji-Hazama/CsvHandler/issues)
 
 *`CSV Handler`ライブラリをご利用いただきありがとうございます！* :wave:  
 *コーディングを楽しんでください！* :computer:
