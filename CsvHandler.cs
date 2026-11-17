@@ -1,8 +1,9 @@
+using CsvHandler.Options;
 using System.Text;
 
 namespace CsvHandler;
 
-public partial class CsvHandler : ICsvHandler
+public class CsvHandler : ICsvHandler
 {
     #region Constants
 
@@ -14,11 +15,20 @@ public partial class CsvHandler : ICsvHandler
 
     #region Constructor
 
+    /// <summary>
+    /// Initializes a new instance of the CsvHandler class with the specified parameters.
+    /// </summary>
+    /// <param name="file_name">The name of the CSV file.</param>
+    /// <param name="encoding">The encoding to use when reading or writing the CSV file.</param>
+    /// <param name="delimiter">The delimiter used to separate values in the CSV file.</param>
+    /// <param name="new_line">The newline character(s) used in the CSV file.</param>
+    /// <param name="has_header">Indicates whether the CSV file has a header row.</param>
+    /// <param name="header">The list of header column names.</param>
     public CsvHandler(
         string file_name,
         Encoding? encoding = null,
-        Delimiter? delimiter = null,
-        NewLine? new_line = null,
+        Options.Delimiter? delimiter = null,
+        Options.NewLine? new_line = null,
         bool has_header = true,
         List<string>? header = null
         )
@@ -141,7 +151,7 @@ public partial class CsvHandler : ICsvHandler
     /// <param name="new_line">The newline character to use.</param>
     /// <param name="file_mode">The write mode, either overwrite or append.</param>
     /// <exception cref="HandlerExceptions">Thrown when an error occurs while writing to the CSV file.</exception>
-    public void Write(List<List<string>> data_rows, NewLine? new_line = null, WriteMode write_mode = WriteMode.Overwrite, bool write_header = true)
+    public void Write(List<List<string>> data_rows, Options.NewLine? new_line = null, Options.WriteMode write_mode = Options.WriteMode.Overwrite, bool write_header = true, bool force_double_quotes = false)
     {
         StreamWriter? writer = null;
 
@@ -175,14 +185,14 @@ public partial class CsvHandler : ICsvHandler
                 }
                 else
                 {
-                    writer.WriteLine(JoinRow(Header));
+                    writer.WriteLine(JoinRow(Header, force_double_quotes));
                 }
             }
 
             foreach (List<string> row in data_rows)
             {
                 // Join the row elements with the specified delimiter and write to the file
-                writer.WriteLine(JoinRow(row));
+                writer.WriteLine(JoinRow(row, force_double_quotes));
             }
         }
         finally
@@ -324,14 +334,14 @@ public partial class CsvHandler : ICsvHandler
     /// </summary>
     /// <param name="row">The list of strings representing a row in the CSV file.</param>
     /// <returns>A single string representing the joined row.</returns>
-    private string JoinRow(List<string> row)
+    private string JoinRow(List<string> row, bool force_double_quotes)
     {
         StringBuilder joined_row = new StringBuilder();
         for (int i = 0; i < row.Count; i++)
         {
             string value = row[i];
             // If the value contains the delimiter, newline, or an odd number of quotes, wrap it in quotes and escape any existing quotes
-            if (value.Contains(Csv_Delimiter) || value.Contains('\n') || value.Contains('\r') || value.Count(c => c == '"') % 2 != 0)
+            if (force_double_quotes || value.Contains(Csv_Delimiter) || value.Contains('\n') || value.Contains('\r') || value.Count(c => c == '"') % 2 != 0)
             {
                 // Escape quotes in the value
                 if (value.Contains('"'))
@@ -351,6 +361,8 @@ public partial class CsvHandler : ICsvHandler
 
     #endregion Private Helpter Methods
 }
+
+#region ICsvHandler Interface
 
 /// <summary>
 /// Interface for CSV file handling operations.
@@ -416,49 +428,10 @@ public interface ICsvHandler
     /// <param name="data_rows">The list of rows to write to the CSV file.</param>
     /// <param name="new_line">The newline character to use.</param>
     /// <param name="file_mode">The write mode, either overwrite or append.</param>
+    /// <param name="write_header">Indicates whether to write the header row.</param>
+    /// <param name="force_double_quotes">Indicates whether to force double quotes around all values.</param>
     /// <exception cref="HandlerExceptions">Thrown when an error occurs while writing to the CSV file.</exception>
-    void Write(List<List<string>> data_rows, NewLine? new_line = null, WriteMode write_mode = WriteMode.Overwrite, bool write_header = true);
+    void Write(List<List<string>> data_rows, NewLine? new_line = null, WriteMode write_mode = WriteMode.Overwrite, bool write_header = true, bool force_double_quotes = false);
 }
 
-public class Delimiter
-{
-    private Delimiter(string value) { Value = value; }
-    public string Value { get; private set; }
-
-    public static Delimiter Comma { get { return new Delimiter(","); } }
-    public static Delimiter Tab { get { return new Delimiter("\t"); } }
-    public static Delimiter Semicolon { get { return new Delimiter(";"); } }
-    public static Delimiter Pipe { get { return new Delimiter("|"); } }
-}
-
-public class NewLine
-{
-    private NewLine(string value) { Value = value; }
-    public string Value { get; private set; }
-
-    public static NewLine CRLF { get { return new NewLine("\r\n"); } }
-    public static NewLine LF { get { return new NewLine("\n"); } }
-    public static NewLine CR { get { return new NewLine("\r"); } }
-}
-
-public enum WriteMode
-{
-    Overwrite,
-    Append
-}
-
-public class HandlerExceptions : Exception
-{
-    public HandlerExceptions(string message) : base(message) { }
-    public HandlerExceptions(string message, Exception inner_exception) : base(message, inner_exception) { }
-
-    public class InvalidCSVException : HandlerExceptions
-    {
-        public InvalidCSVException(string message = "") : base($"Invalid CSV format: {message}") { }
-    }
-
-    public class InvalidArgumentException : HandlerExceptions
-    {
-        public InvalidArgumentException(string message = "") : base($"Invalid argument: {message}") { }
-    }
-}
+#endregion ICsvHandler Interface
