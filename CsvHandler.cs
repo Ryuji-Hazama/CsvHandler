@@ -39,6 +39,11 @@ namespace CsvHandler
         List<string> Header { get; set; }
 
         /// <summary>
+        /// Gets or sets the newline character used in the CSV file.
+        /// </summary>
+        string New_Line { get; set; }
+
+        /// <summary>
         /// Reads the CSV file and returns a list of rows, where each row is represented as a list of strings.
         /// </summary>
         /// <param name="skip_header">Indicates whether the first row is a header and should be skipped.</param>
@@ -82,6 +87,7 @@ namespace CsvHandler
             string file_name,
             Encoding? encoding = null,
             Delimiter? delimiter = null,
+            NewLine? new_line = null,
             bool has_header = true,
             List<string>? header = null
             )
@@ -90,6 +96,7 @@ namespace CsvHandler
             File_Encoding = encoding ?? Encoding.GetEncoding(DEFAULT_ENCODING);
             Csv_Delimiter = delimiter?.Value ?? DEFAULT_DELIMITER;
             Has_Header = has_header;
+            New_Line = new_line?.Value ?? NewLine.CRLF.Value;
             Header = header ?? new List<string>();
         }
 
@@ -102,6 +109,7 @@ namespace CsvHandler
         public string Csv_Delimiter { get; set; }
         public bool Has_Header { get; set; }
         public List<string> Header { get; set; }
+        public string New_Line { get; set; }
 
         #endregion
 
@@ -352,7 +360,20 @@ namespace CsvHandler
                 else if (c == '\n' || c == '\r')
                 {
                     // Newline character
-                    if (inside_quotes)
+                    StringBuilder new_line_builder = new StringBuilder();
+
+                    if (New_Line.Length == 2 && index + 1 < line.Length)
+                    {
+                        new_line_builder.Append(c);
+                        new_line_builder.Append(line[index + 1]);
+                    }else
+                    {
+                        new_line_builder.Append(c);
+                    }
+
+                    string new_line_str = new_line_builder.ToString();
+
+                    if (inside_quotes || new_line_str != New_Line)
                         current_value.Append(c); // Inside quotes, treat as part of the value
                     else
                         break; // Outside quotes, treat as end of line
@@ -421,6 +442,16 @@ namespace CsvHandler
         public static Delimiter Tab { get { return new Delimiter("\t"); } }
         public static Delimiter Semicolon { get { return new Delimiter(";"); } }
         public static Delimiter Pipe { get { return new Delimiter("|"); } }
+    }
+
+    public class NewLine
+    {
+        private NewLine(string value) { Value = value; }
+        public string Value { get; private set; }
+
+        public static NewLine CRLF { get { return new NewLine("\r\n"); } }
+        public static NewLine LF { get { return new NewLine("\n"); } }
+        public static NewLine CR { get { return new NewLine("\r"); } }
     }
 
     public enum WriteMode
